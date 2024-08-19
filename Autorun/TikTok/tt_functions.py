@@ -49,11 +49,8 @@ tt_num_seguidores_bot_prev = 0
 def tt_act_seguidores_bot_prev():
     global tt_num_seguidores_bot_prev
     
-    # Obtener cifra desde archivo de texto
-    tt_num_seguidores_bot_prev = gen_functions.gen_busq_txt('Autorun/TikTok/Refs/tt_ref.txt', 1)
-    
-    # Convertir cifra a entero
-    tt_num_seguidores_bot_prev = int(tt_num_seguidores_bot_prev)
+    # Obtener cifra desde archivo de texto y convertir a entero
+    tt_num_seguidores_bot_prev = int(gen_functions.gen_busq_txt('Autorun/TikTok/Refs/tt_ref.txt', 1))
 
 # Coordenas para "Followers", "Following" y "Likes" del bot y seguidores del bot
 tt_ffl_box = [90, 234, 410, 24]
