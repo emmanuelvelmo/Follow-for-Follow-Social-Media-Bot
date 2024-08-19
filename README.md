@@ -1,2 +1,2 @@
-# follow-for-follow-social-media-bot
+# Follow-for-follow-social-media-bot
 A simple follow for follow bot for TikTok and Instagram
