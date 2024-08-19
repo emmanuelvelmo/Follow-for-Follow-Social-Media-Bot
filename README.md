@@ -1,2 +1,2 @@
-# Follow-for-follow-social-media-bot
-A simple follow for follow bot for TikTok and Instagram
+# Follow for follow and web scraping social media bot
+A simple follow for follow and web scraping bot for TikTok, Instagram, Facebook and Whatsapp
