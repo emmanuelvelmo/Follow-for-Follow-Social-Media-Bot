@@ -33,7 +33,7 @@ def chr_rec_pag():
 
 # Cerrar ventana de restaurar páginas
 def chr_error_cerrar():
-    pyautogui.moveTo(1008, 54)
+    pyautogui.moveTo(1008, 88)
     pyautogui.click()
     time.sleep(0.5)
 
