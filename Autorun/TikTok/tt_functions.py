@@ -1,3 +1,4 @@
+from Autorun.System import sys_functions
 from Autorun.Generic import gen_functions
 from Autorun.Chromium import chr_functions
 import pyautogui
@@ -49,7 +50,7 @@ tt_num_seguidores_bot_prev = 0
 def tt_act_seguidores_bot_prev():
     global tt_num_seguidores_bot_prev
     
-    # Obtener cifra desde archivo de texto y convertir cifra a entero
+    # Obtener cifra desde archivo de texto y convertir a entero
     tt_num_seguidores_bot_prev = int(gen_functions.gen_busq_txt('Autorun/TikTok/Refs/tt_ref.txt', 1))
 
 # Coordenas para "Followers", "Following" y "Likes" del bot y seguidores del bot
@@ -69,7 +70,7 @@ def tt_act_seg_bot():
     tt_num_seguidos_bot = gen_functions.gen_cifra(tmp_img, "Following")
     tt_num_seguidores_bot = gen_functions.gen_cifra(tmp_img, "Followers")
 
-# Limpir seguidos del bot
+# Limpiar seguidos del bot
 def tt_limp_seguidos_bot():
     # Obtener fecha y hora de sesión previa
     fecha_prev = gen_functions.gen_busq_txt('Autorun/TikTok/Refs/tt_ref.txt', 0)
@@ -78,45 +79,46 @@ def tt_limp_seguidos_bot():
     dif_hr = gen_functions.gen_dif_hr(fecha_prev)
     
     # Limpiar "seguidos" si aplica
-    if dif_hr > 24:
-        # Mientras hayan más de 4 usuarios siguiendo
-        while tt_num_seguidos_bot > 4:
-            # Ir a "seguidos" del bot
-            tt_siguiendo_pos()
-            
-            # Bool de primer usuario evaluado
-            bl_prim_usr = False
-            
-            # Dejar de seguir usuarios
-            for iter_seg in range(tt_num_seguidos_bot - 4):
+    if dif_hr >= 36:
+        if tt_num_seguidos_bot > 5:
+            # Mientras hayan más de 5 usuarios siguiendo
+            while tt_num_seguidos_bot > 5:
+                # Ir a "seguidos" del bot
+                tt_siguiendo_pos()
                 
-                if bl_prim_usr:
-                    # Colocar cursor para desplazar hacia abajo
-                    tt_pos_ventana_ch()
+                # Bool de primer usuario evaluado
+                bl_prim_usr = False
+                
+                # Dejar de seguir usuarios
+                for iter_seg in range(tt_num_seguidos_bot - 4):
                     
-                    # Desplazar hacia el siguiente seguidor
-                    gen_functions.gen_desp_usr(tt_seg_box)
+                    if bl_prim_usr:
+                        # Colocar cursor para desplazar hacia abajo
+                        tt_pos_ventana_ch()
+                        
+                        # Desplazar hacia el siguiente seguidor
+                        gen_functions.gen_desp_usr(tt_seg_box)
+                    
+                    # Encontrar nombre del seguidor y asignar coordenas a variable genérica
+                    gen_functions.gen_prim_usr(tt_seg_box)
+                    
+                    # Asignar coordenas del centro del botón
+                    coords_btn = tt_aj_seg_box()
+                    
+                    # Asignar las coordenas del centro del botón a la variable genérica con coordenadas en dónde hacer click
+                    gen_functions.gen_camb_coords(coords_btn)
+                    
+                    # Click sobre el botón
+                    gen_functions.gen_click_spec(0.25)
+                    
+                    # Cambiar bool
+                    bl_prim_usr = True
                 
-                # Encontrar nombre del seguidor y asignar coordenas a variable genérica
-                gen_functions.gen_prim_usr(tt_seg_box)
+                # Recargar página
+                chr_functions.chr_rec_pag()
                 
-                # Asignar coordenas del centro del botón
-                coords_btn = tt_aj_seg_box()
-                
-                # Asignar las coordenas del centro del botón a la variable genérica con coordenadas en dónde hacer click
-                gen_functions.gen_camb_coords(coords_btn)
-                
-                # Click sobre el botón
-                gen_functions.gen_click_spec(0.25)
-                
-                # Cambiar bool
-                bl_prim_usr = True
-            
-            # Recargar página
-            chr_functions.chr_rec_pag()
-            
-            # Capturar número de "seguidos" del bot
-            tt_act_seg_bot()
+                # Capturar número de "seguidos" del bot
+                tt_act_seg_bot()
 
 tt_dif_seguidores_bot = 0
 
@@ -157,15 +159,15 @@ def tt_seguidores_priv():
     gen_functions.gen_camb_entn(tmp_scr1, tmp_scr2)
 
 # Parámetros para decidir si seguir o no
-tt_ratio_min = 1.8
-tt_seg_min = 900
+tt_ratio_min = 3
+tt_sig_min = 900
 
 # Campo de visión en ventana de seguidores y seguidos
 tt_seg_box = [320, 162, 224, 200]
 
 # Elegir a un seguidor del bot
 def tt_elegir_seguidor_bot():
-    # Máximo de iteraciones
+    # Calcular máximo de iteraciones
     tt_calc_dif_seg_bot()
     
     # Bool de primer usuario evaluado
@@ -194,7 +196,7 @@ def tt_elegir_seguidor_bot():
         tmp_ratio = gen_functions.gen_act_ratio(tt_num_seguidos_seguidor, tt_num_seguidores_seguidor)
         
         # Si el ratio es igual o mayor al aceptado, cumple el mínimo de "seguidos" y los seguidores son públicos, terminar función
-        if tmp_ratio >= tt_ratio_min and tt_num_seguidos_seguidor >= tt_seg_min:
+        if tmp_ratio >= tt_ratio_min and tt_num_seguidos_seguidor >= tt_sig_min:
             # Evaluar si los "seguidores" son privados
             tt_seguidores_priv()
             
@@ -241,11 +243,8 @@ def tt_bl_pal(pal_ref):
     else:
         return False
 
-# Ciclo de búsqueda
-def tt_ciclo_busqueda(val_busq):
-    # Máximo de iteraciones
-    max_iter = tt_num_seguidores_seguidor
-    
+# Ciclo de búsqueda simplificado
+def tt_ciclo_busqueda_simp(val_busq):
     # Bool de primer usuario evaluado
     bl_prim_usr = False
     
@@ -253,7 +252,51 @@ def tt_ciclo_busqueda(val_busq):
     cont_seg = 0
     
     # Iteraciones entre seguidores del seguidor
-    for iter_seg in range(max_iter):
+    for iter_seg in range(tt_num_seguidores_seguidor):
+        if cont_seg == val_busq:
+            break
+        else:
+            # Desplazar hacia abajo después del primer seguidor
+            if bl_prim_usr:
+                # Colocar cursor para desplazar hacia abajo
+                tt_pos_ventana_ch()
+                
+                # Desplazar hacia el siguiente seguidor
+                gen_functions.gen_desp_usr(tt_seg_box)
+            
+            # Encontrar nombre del seguidor y asignar coordenas a variable genérica
+            gen_functions.gen_prim_usr(tt_seg_box)
+            
+            # Asignar coordenas del centro del botón
+            coords_btn = tt_aj_seg_box()
+            
+            # Evaluar si la palabra "Follow" está presente
+            bl_follow = tt_bl_pal("Follow")
+            
+            # El botón indica "Follow"
+            if bl_follow:
+                # Asignar las coordenas del centro del botón a la variable genérica con coordenadas en dónde hacer click
+                gen_functions.gen_camb_coords(coords_btn)
+                
+                # Click sobre el botón "Follow"
+                gen_functions.gen_click_spec(0.25)
+                
+                # Aumentar contador
+                cont_seg += 1
+            
+            # Cambiar bool
+            bl_prim_usr = True
+
+# Ciclo de búsqueda
+def tt_ciclo_busqueda(val_busq):
+    # Bool de primer usuario evaluado
+    bl_prim_usr = False
+    
+    # Contador de seguidos
+    cont_seg = 0
+    
+    # Iteraciones entre seguidores del seguidor
+    for iter_seg in range(tt_num_seguidores_seguidor):
         if cont_seg == val_busq:
             break
         else:
@@ -289,7 +332,7 @@ def tt_ciclo_busqueda(val_busq):
                 chr_functions.chr_cerrar_pestana()
                 
                 # Si el ratio es igual o mayor al aceptado y cumple el mínimo de "seguidos", seguir usuario
-                if tmp_ratio >= tt_ratio_min and tt_num_seguidos_seguidor >= tt_seg_min:
+                if tmp_ratio >= tt_ratio_min and tt_num_seguidos_seguidor >= tt_sig_min:
                     # Asignar las coordenas del centro del botón a la variable genérica con coordenadas en dónde hacer click
                     gen_functions.gen_camb_coords(coords_btn)
                     
@@ -298,10 +341,65 @@ def tt_ciclo_busqueda(val_busq):
                     
                     # Aumentar contador
                     cont_seg += 1
-                    
+            
             # Cambiar bool
             bl_prim_usr = True
 
-# Esperar hasta siguiente ciclo de búsqueda
-def tt_espera(val_tiempo):
+# # Actualizar fecha en txt
+def tt_act_fecha():
+    # Obtener fecha y hora de sesión previa
+    fecha_prev = gen_functions.gen_busq_txt('Autorun/TikTok/Refs/tt_ref.txt', 0)
+    
+    # Obtener diferencia de horas entre fecha previa y actual
+    dif_hr = gen_functions.gen_dif_hr(fecha_prev)
+    
+    # Si han pasado por lo menos 36 horas desde la última limpieza
+    if dif_hr >= 36:
+        # Actualizar fecha en txt
+        gen_functions.gen_act_fecha('Autorun/TikTok/Refs/tt_ref.txt', 0)
+
+# Actualizar número de seguidores del bot en txt
+def tt_act_seg_txt():
+    gen_functions.gen_act_txt('Autorun/TikTok/Refs/tt_ref.txt', 1, tt_num_seguidores_bot)
+
+def tt_ciclo_bot(val_seg, val_tiempo):
+    # Abrir TikTok
+    sys_functions.sys_abrir_tt()
+    
+    # Cerrar ventana de restaurar páginas
+    chr_functions.chr_error_cerrar()
+    
+    # Ir a perfil de TikTok del bot
+    tt_perfil_bot()
+    
+    # Obtener número de seguidos, seguidores y seguidores de sesión previa, del bot
+    tt_act_seg_bot()
+    tt_act_seguidores_bot_prev()
+    
+    # Revisar tiempo desde ultima sesión,limpiar "seguidos" si aplica
+    tt_limp_seguidos_bot()
+    
+    # Ir a seguidores del bot
+    tt_seguidores_pos()
+    
+    # Elegir un seguidor del bot
+    tt_elegir_seguidor_bot()
+    
+    # Ir a seguidores del seguidor
+    tt_seguidores_pos()
+    
+    # Seguir seguidores del seguidor
+    tt_ciclo_busqueda_simp(val_seg)
+    #tt_ciclo_busqueda(val_seg)
+    
+    # Cerrar ventana
+    sys_functions.sys_cerrar_ventana()
+    
+    # Actualizar registro de sesión cada 36 horas o más
+    tt_act_fecha()
+    
+    # Actualizar número de seguidores
+    tt_act_seg_txt()
+    
+    # Esperar hasta reanudar el ciclo
     time.sleep(val_tiempo)
