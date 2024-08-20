@@ -35,7 +35,7 @@ def sys_abrir_chr():
     
     # Pantalla completa
     pyautogui.press('f11')
-    time.sleep(1)
+    time.sleep(2)
 
 # Abrir Instagram
 def sys_abrir_inst():
