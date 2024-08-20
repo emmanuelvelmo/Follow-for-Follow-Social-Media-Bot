@@ -40,7 +40,7 @@ def gen_act_txt(ruta_txt, pos_linea, tmp_palabra):
             tmp_lineas = ref_txt.readlines()
 
         # Actualizar la línea en la posición deseada
-        tmp_lineas[pos_linea] = tmp_palabra + '\n'
+        tmp_lineas[pos_linea] = str(tmp_palabra) + '\n'
 
         # Escribir el contenido actualizado en el archivo
         with open(ruta_txt, 'w') as ref_txt:
@@ -54,17 +54,14 @@ def gen_dif_hr(fecha_tmp):
     # Convertir fecha previa de string a datetime
     fecha_prev = datetime.datetime.strptime(fecha_tmp, "%Y-%m-%d-%H:%M:%S")
     
+    # Calcular diferencia entre fechas en horas
     dif_hr = (fecha_act - fecha_prev).total_seconds() / 3600
     
     return dif_hr
 
-# Guardar fecha actual en archivo
-def gen_act_fecha(ruta_txt):
-    # Obtener la fecha y hora actual
-    fecha_act = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
-    
-    # Actualizar fecha en txt
-    gen_act_txt(ruta_txt, 0, fecha_act)
+# Actualizar fecha actual en archivo cada 36 horas o más
+def gen_act_fecha(ruta_txt, pos_linea):
+    gen_act_txt(ruta_txt, pos_linea, datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))
 
 # Convertir imagen a escala de grises
 def gen_escala_grises(tmp_img):
@@ -108,19 +105,34 @@ def gen_text_img(tmp_img):
     # Limpiar espacios en blanco y retornar
     return val_text.strip()
 
-# Buscar una cifra anterior a una palabra
+# Obtener cifra anterior a una palabra en un texto
 def gen_cifra_palabra(tmp_text, tmp_palabra):
-    # Buscar la palabra en el texto usando expresión regular
-    tmp_match = re.search(r'(\d+)(?=\s*' + re.escape(tmp_palabra) + r'\b)', tmp_text)
+    # La expresión regular busca una cifra con o sin decimales seguida de opcionalmente un sufijo (K, k, M, m)
+    pattern = r'(\d+(?:\.\d+)?)\s*(?:([KkMm])\s*)?' + re.escape(tmp_palabra)
+    tmp_match = re.search(pattern, tmp_text)
     
-    # Si hay un punto, una K o una M a la derecha del último dígito de la cifra, anular cifra
-    
-    
-    # Si se encuentra una coincidencia, devolver el número
+    # Se encuentra una cifra seguida de la palabra en el texto
     if tmp_match:
-        return int(tmp_match.group(1))
+        # Extraer la cifra encontrada
+        tmp_cifra = tmp_match.group(1)
+        # Extraer el sufijo encontrado (si existe)
+        suf_val = tmp_match.group(2) if tmp_match.group(2) else ''
+        
+        # Convertir la cifra a float para manejar decimales correctamente
+        cifra_val = float(tmp_cifra)
+        
+        # Procesar la cifra con su sufijo
+        if suf_val in {'K', 'k'}:
+            # Multiplicar por mil
+            return int(cifra_val * 1000)
+        elif suf_val in {'M', 'm'}:
+            # Multiplicar por un millón
+            return int(cifra_val * 1000000)
+        else:
+            # No hay sufijo, devolver la cifra como entero
+            return int(cifra_val)
+    # No se encuentra la palabra o la cifra
     else:
-        # Si no se encuentra la palabra o la cifra, retornar cero
         return 0
 
 # Obtener una cifra a partir de imagen y una palabra
@@ -179,6 +191,19 @@ def gen_calc_cent_rtn(vis_box):
     
     return tmp_xy
 
+# Conservar segunda línea con texto de una captura de texto
+def gen_2l_text(tmp_text):
+    # El texto por lo menos tiene 2 líneas
+    if len(tmp_text.splitlines()) >= 2:
+        seg_lin = tmp_text.splitlines()[1]
+        
+        # Eliminar espacios en blanco para la línea conservada
+        seg_lin_limp = seg_lin.strip()
+        
+        return seg_lin_limp
+    else:
+        return ''
+
 # Conservar primera línea con texto de una captura de texto
 def gen_limp_text(tmp_text):
     # Eliminar líneas en blanco
@@ -195,27 +220,30 @@ def gen_limp_text(tmp_text):
     
     return prim_lin_limp
 
-# Obtener la primera línea de texto de una captura de pantalla en área específica
-def gen_prim_lin(tmp_img):
+# Líneas de referencia de usuario
+gen_usr_ref = ''
+gen_2l_ref = ''
+
+# Actualizar líneas de referencia de usuario
+def gen_usr_lins(tmp_img):
+    global gen_usr_ref, gen_2l_ref
+    
     # Obtener texto de la imagen
     tmp_text = gen_text_img(tmp_img)
     
-    # Obtener primer línea del texto
-    prim_lin = gen_limp_text(tmp_text)
+    # Obtener primera línea del texto
+    gen_usr_ref = gen_limp_text(tmp_text)
     
-    return prim_lin
-
-gen_usr_ref = ''
+    # Obtener segunda línea del texto
+    gen_2l_ref = gen_2l_text(tmp_text)
 
 # Asignar nombre del primer usuario en lista y asignar coordenadas
 def gen_prim_usr(vis_box):
-    global gen_usr_ref
-    
     # Capturar un área específica de la pantalla
     tmp_img = gen_capt_spec_pant(vis_box)
     
-    # Actualizar usuario de referencia
-    gen_usr_ref = gen_prim_lin(tmp_img)
+    # Actualizar usuario de referencia y segunda línea si la hay
+    gen_usr_lins(tmp_img)
     
     # Calcular coordenas para el usuario de referencia
     gen_calc_pos_text(tmp_img, gen_usr_ref)
@@ -229,15 +257,18 @@ def gen_desp_usr(vis_box):
         # Capturar región en pantalla
         tmp_img = gen_capt_spec_pant(vis_box)
         
-        # Obtener texto de referencia
-        tmp_text = gen_prim_lin(tmp_img)
+        # Obtener texto de una imagen
+        tmp_text = gen_text_img(tmp_img)
         
-        # Evaluar si el nombre del usuario está presente
-        if tmp_text == gen_usr_ref:
+        # Obtener nombre de usuario (primera línea)
+        tmp_usr = gen_limp_text(tmp_text)
+        
+        # Desplazar si el nombre del usuario o la segunda línea están presentes
+        if tmp_usr == gen_usr_ref or tmp_usr == gen_2l_ref:
             # Desplazar hacia abajo
             pyautogui.mouseDown(button='middle')
             pyautogui.moveRel(0, 20)
-            time.sleep(0.25)
+            time.sleep(0.3)
             pyautogui.mouseUp(button='middle')
             pyautogui.moveRel(0, -20)
         else:
@@ -298,7 +329,7 @@ def gen_f_camb_bl(val_bl):
 def gen_camb_entn(capt_1, capt_2):
     global gen_camb_bl
     
-    if cv2.norm(capt_1, capt_2, cv2.NORM_L2) > 40000:
+    if cv2.norm(capt_1, capt_2, cv2.NORM_L2) > 50000:
         gen_camb_bl = True
     else:
         gen_camb_bl = False
