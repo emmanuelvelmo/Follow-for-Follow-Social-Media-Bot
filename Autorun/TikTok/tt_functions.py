@@ -4,7 +4,7 @@ from Autorun.Chromium import chr_functions
 import pyautogui
 import time
 
-# Perfil TikTok
+# Perfil de TikTok
 def tt_perfil_bot():
     pyautogui.moveTo(976, 32)
     pyautogui.click()
