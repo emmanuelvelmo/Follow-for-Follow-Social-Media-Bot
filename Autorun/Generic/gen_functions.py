@@ -108,8 +108,7 @@ def gen_text_img(tmp_img):
 # Obtener cifra anterior a una palabra en un texto
 def gen_cifra_palabra(tmp_text, tmp_palabra):
     # La expresión regular busca una cifra con o sin decimales seguida de opcionalmente un sufijo (K, k, M, m)
-    pattern = r'(\d+(?:\.\d+)?)\s*(?:([KkMm])\s*)?' + re.escape(tmp_palabra)
-    tmp_match = re.search(pattern, tmp_text)
+    tmp_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:([KkMm])\s*)?' + re.escape(tmp_palabra), tmp_text)
     
     # Se encuentra una cifra seguida de la palabra en el texto
     if tmp_match:
