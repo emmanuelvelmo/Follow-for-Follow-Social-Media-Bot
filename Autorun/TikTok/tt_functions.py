@@ -345,7 +345,7 @@ def tt_ciclo_busqueda(val_busq):
             # Cambiar bool
             bl_prim_usr = True
 
-# # Actualizar fecha en txt
+# Actualizar fecha en txt
 def tt_act_fecha():
     # Obtener fecha y hora de sesión previa
     fecha_prev = gen_functions.gen_busq_txt('Autorun/TikTok/Refs/tt_ref.txt', 0)
