@@ -30,14 +30,14 @@ def tt_seguidores_pos_cur():
     pyautogui.moveTo(286, 246)
     time.sleep(1)
 
-# Cerrar ventana chica
-def tt_cerrar_ventana_ch():
+# Cerrar pop up
+def tt_cerrar_pop_up():
     pyautogui.moveTo(90, 540)
     pyautogui.click()
     time.sleep(1)
 
-# Posición en ventana chica
-def tt_pos_ventana_ch():
+# Posición en pop up
+def tt_pos_pop_up():
     pyautogui.moveTo(610, 200)
     time.sleep(0.25)
 
@@ -94,7 +94,7 @@ def tt_limp_seguidos_bot():
                     
                     if bl_prim_usr:
                         # Colocar cursor para desplazar hacia abajo
-                        tt_pos_ventana_ch()
+                        tt_pos_pop_up()
                         
                         # Desplazar hacia el siguiente seguidor
                         gen_functions.gen_desp_usr(tt_seg_box)
@@ -178,7 +178,7 @@ def tt_elegir_seguidor_bot():
         # Desplazar hacia abajo después del primer seguidor
         if bl_prim_usr:
             # Colocar cursor para desplazar hacia abajo
-            tt_pos_ventana_ch()
+            tt_pos_pop_up()
             
             # Desplazar hacia el siguiente seguidor
             gen_functions.gen_desp_usr(tt_seg_box)
@@ -195,9 +195,9 @@ def tt_elegir_seguidor_bot():
         # Calcular ratio del seguidor
         tmp_ratio = gen_functions.gen_act_ratio(tt_num_seguidos_seguidor, tt_num_seguidores_seguidor)
         
-        # Si el ratio es igual o mayor al aceptado, cumple el mínimo de "seguidos" y los seguidores son públicos, terminar función
+        # Si el ratio es igual o mayor al aceptado, cumple el mínimo de "seguidos"
         if tmp_ratio >= tt_ratio_min and tt_num_seguidos_seguidor >= tt_sig_min:
-            # Evaluar si los "seguidores" son privados
+            # Evaluar si los seguidores son privados
             tt_seguidores_priv()
             
             if gen_functions.gen_camb_bl:
@@ -229,8 +229,8 @@ def tt_aj_seg_box():
     # Calcular centro del botón y retornar coordenadas
     return gen_functions.gen_calc_cent_rtn(tt_bot_seg_box)
 
-# Evaluar si una palabra está presente
-def tt_bl_pal(pal_ref):
+# Evaluar si una palabra está presente en el botón
+def tt_bl_btn(pal_ref):
     # Capturar área de la pantalla con el botón
     tmp_img = gen_functions.gen_capt_spec_pant(tt_bot_seg_box)
     
@@ -259,7 +259,7 @@ def tt_ciclo_busqueda_simp(val_busq):
             # Desplazar hacia abajo después del primer seguidor
             if bl_prim_usr:
                 # Colocar cursor para desplazar hacia abajo
-                tt_pos_ventana_ch()
+                tt_pos_pop_up()
                 
                 # Desplazar hacia el siguiente seguidor
                 gen_functions.gen_desp_usr(tt_seg_box)
@@ -271,7 +271,7 @@ def tt_ciclo_busqueda_simp(val_busq):
             coords_btn = tt_aj_seg_box()
             
             # Evaluar si la palabra "Follow" está presente
-            bl_follow = tt_bl_pal("Follow")
+            bl_follow = tt_bl_btn("Follow")
             
             # El botón indica "Follow"
             if bl_follow:
@@ -303,7 +303,7 @@ def tt_ciclo_busqueda(val_busq):
             # Desplazar hacia abajo después del primer seguidor
             if bl_prim_usr:
                 # Colocar cursor para desplazar hacia abajo
-                tt_pos_ventana_ch()
+                tt_pos_pop_up()
                 
                 # Desplazar hacia el siguiente seguidor
                 gen_functions.gen_desp_usr(tt_seg_box)
@@ -315,7 +315,7 @@ def tt_ciclo_busqueda(val_busq):
             coords_btn = tt_aj_seg_box()
             
             # Evaluar si la palabra "Follow" está presente
-            bl_follow = tt_bl_pal("Follow")
+            bl_follow = tt_bl_btn("Follow")
             
             # El botón indica "Follow"
             if bl_follow:
