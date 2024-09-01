@@ -67,6 +67,7 @@ def tt_act_seg_bot():
     # Capturar región de pantalla
     tmp_img = gen_functions.gen_capt_spec_pant(tt_ffl_box)
     
+    # Actualizar variables
     tt_num_seguidos_bot = gen_functions.gen_cifra(tmp_img, "Following")
     tt_num_seguidores_bot = gen_functions.gen_cifra(tmp_img, "Followers")
 
@@ -102,7 +103,7 @@ def tt_limp_seguidos_bot():
                     # Encontrar nombre del seguidor y asignar coordenas a variable genérica
                     gen_functions.gen_prim_usr(tt_seg_box)
                     
-                    # Asignar coordenas del centro del botón
+                    # Asignar coordenas del centro del botón y ajustar caja de captura de texto de botón
                     coords_btn = tt_aj_seg_box()
                     
                     # Asignar las coordenas del centro del botón a la variable genérica con coordenadas en dónde hacer click
@@ -138,6 +139,7 @@ def tt_act_seg_seguidor():
     # Capturar región de pantalla
     tmp_img = gen_functions.gen_capt_spec_pant(tt_ffl_box)
     
+    # Actualizar variables
     tt_num_seguidos_seguidor = gen_functions.gen_cifra(tmp_img, "Following")
     tt_num_seguidores_seguidor = gen_functions.gen_cifra(tmp_img, "Followers")
 
@@ -183,7 +185,7 @@ def tt_elegir_seguidor_bot():
             # Desplazar hacia el siguiente seguidor
             gen_functions.gen_desp_usr(tt_seg_box)
         
-        # Encontrar nombre del seguidor y asignar coordenas
+        # Encontrar nombre del seguidor y asignar coordenas a variable genérica
         gen_functions.gen_prim_usr(tt_seg_box)
         
         # Ir a perfil del seguidor en nueva pestaña
@@ -219,7 +221,7 @@ def tt_elegir_seguidor_bot():
 # Coordenas del botón "Follow", "Following", "Follow Back" de ventana de seguidores y seguidos
 tt_bot_seg_box = [648, 186, 94, 22]
 
-# Ajustar botón "Follow", "Following", "Follow back" de ventana de seguidores y seguidos
+# Ajustar botón "Follow", "Following", "Follow back" de ventana de seguidores y seguidos y retornar cordenadas de su centro
 def tt_aj_seg_box():
     global tt_bot_seg_box
     
@@ -252,7 +254,7 @@ def tt_ciclo_busqueda_simp(val_busq):
     cont_seg = 0
     
     # Iteraciones entre seguidores del seguidor
-    for iter_seg in range(tt_num_seguidores_seguidor):
+    for iter_seg in range(tt_num_seguidores_seguidor - 5):
         if cont_seg == val_busq:
             break
         else:
@@ -267,10 +269,10 @@ def tt_ciclo_busqueda_simp(val_busq):
             # Encontrar nombre del seguidor y asignar coordenas a variable genérica
             gen_functions.gen_prim_usr(tt_seg_box)
             
-            # Asignar coordenas del centro del botón
+            # Asignar coordenas del centro del botón y ajustar caja de captura de texto de botón
             coords_btn = tt_aj_seg_box()
             
-            # Evaluar si la palabra "Follow" está presente
+            # Evaluar si la palabra "Follow" está presente en el botón
             bl_follow = tt_bl_btn("Follow")
             
             # El botón indica "Follow"
@@ -296,7 +298,7 @@ def tt_ciclo_busqueda(val_busq):
     cont_seg = 0
     
     # Iteraciones entre seguidores del seguidor
-    for iter_seg in range(tt_num_seguidores_seguidor):
+    for iter_seg in range(tt_num_seguidores_seguidor - 5):
         if cont_seg == val_busq:
             break
         else:
@@ -311,10 +313,10 @@ def tt_ciclo_busqueda(val_busq):
             # Encontrar nombre del seguidor y asignar coordenas a variable genérica
             gen_functions.gen_prim_usr(tt_seg_box)
             
-            # Asignar coordenas del centro del botón
+            # Asignar coordenas del centro del botón y ajustar caja de captura de texto de botón
             coords_btn = tt_aj_seg_box()
             
-            # Evaluar si la palabra "Follow" está presente
+            # Evaluar si la palabra "Follow" está presente en el botón
             bl_follow = tt_bl_btn("Follow")
             
             # El botón indica "Follow"
