@@ -105,6 +105,23 @@ def gen_text_img(tmp_img):
     # Limpiar espacios en blanco y retornar
     return val_text.strip()
 
+# Corregir saltos de línea en texto
+def gen_corr_lin(tmp_img):
+    # Obtener texto de la imagen
+    tmp_txt = gen_text_img(tmp_img)
+
+    # Eliminar líneas en blanco
+    cl_txt = re.sub(r'\n\s*\n', '\n', tmp_txt).strip()
+
+    # Separar cifras y palabras
+    lns_tmp = cl_txt.split('\n')
+
+    nmb_tmp = lns_tmp[0].split()
+    pal_tmp = lns_tmp[1].split()
+
+    # Retornar cifras y palabras combinadas en una línea
+    return ' '.join(f"{num_v} {pal_v}" for num_v, pal_v in zip(nmb_tmp, pal_tmp))
+
 # Obtener cifra anterior a una palabra en un texto
 def gen_cifra_palabra(tmp_text, tmp_palabra):
     # La expresión regular busca una cifra con o sin decimales seguida de opcionalmente un sufijo (K, k, M, m)
@@ -151,6 +168,11 @@ def gen_camb_coords(tmp_coords):
     
     gen_centro_xy[0] = tmp_coords[0]
     gen_centro_xy[1] = tmp_coords[1]
+
+# Colocar cursor sobre una posición específica
+def gen_cur_spec():
+    pyautogui.moveTo(gen_centro_xy[0], gen_centro_xy[1])
+    time.sleep(2)
 
 # Hacer click sobre una posición específica
 def gen_click_spec(val_tiempo):
