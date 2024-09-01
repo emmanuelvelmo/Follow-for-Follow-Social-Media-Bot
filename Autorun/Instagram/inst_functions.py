@@ -50,20 +50,24 @@ def ins_act_seguidores_bot_prev():
     # Obtener cifra desde archivo de texto y convertir a entero
     ins_num_seguidores_bot_prev = int(gen_functions.gen_busq_txt('Autorun/Instagram/Refs/ins_ref.txt', 1))
 
-# Coordenas para "Followers", "Following" y "Likes" del bot y seguidores del bot
+# Coordenas para "Followers", "Following" y "Likes" del bot
 ins_ffl_box = [0, 0, 0, 0]
 
 # Número de seguidos y seguidores del seguidor
 ins_num_seguidos_seguidor = 0
 ins_num_seguidores_seguidor = 0
 
-# Actualizar "seguidos" y "seguidores" del bot
+# Actualizar "seguidores" y "seguidos" del bot
 def ins_act_seg_bot():
     global ins_num_seguidos_bot, ins_num_seguidores_bot
     
     # Capturar región de pantalla
     tmp_img = gen_functions.gen_capt_spec_pant(ins_ffl_box)
     
+    # Corregir saltos de línea en texto
+    gen_functions.gen_corr_lin(tmp_img)
+
+    # Actualizar variables
     ins_num_seguidos_bot = gen_functions.gen_cifra(tmp_img, "Following")
     ins_num_seguidores_bot = gen_functions.gen_cifra(tmp_img, "Followers")
 
@@ -78,20 +82,47 @@ def ins_calc_dif_seg_bot():
     if ins_dif_seguidores_bot < 5:
         ins_dif_seguidores_bot = 15
 
-# Actualizar "seguidos" y "seguidores" del seguidor del bot
+# Actualizar "seguidores" y "seguidos" del seguidor del bot
 def ins_act_seg_seguidor():
     global ins_num_seguidos_seguidor, ins_num_seguidores_seguidor
     
     # Capturar región de pantalla
-    tmp_img = gen_functions.gen_capt_spec_pant(ins_ffl_box)
+    tmp_img = gen_functions.gen_capt_spec_pant(ins_popov_dat_box)
     
+    # Corregir saltos de línea en texto
+    gen_functions.gen_corr_lin(tmp_img)
+
+    # Actualizar variables
     ins_num_seguidos_seguidor = gen_functions.gen_cifra(tmp_img, "Following")
     ins_num_seguidores_seguidor = gen_functions.gen_cifra(tmp_img, "Followers")
 
-# Coordenas del botón "Follow", "Following", "Follow Back" de ventana de seguidores y seguidos
+# Coordenas de caja de captura de "posts", "seguidores" y "seguidos" en popover en listas de seguidos y seguidores
+ins_popov_dat_box = [0, 0, 0, 0]
+
+# Coordenas de caja de captura de tipo de cuenta en popover en listas de seguidos y seguidores
+ins_popov_tip_box = [0, 0, 0, 0]
+
+# Evaluar si la cuenta es privada
+def ins_seguidores_priv():
+    # Capturar área de popover con el tipo de cuenta
+    tmp_img = gen_functions.gen_capt_spec_pant(ins_popov_tip_box)
+    
+    # Obtener texto de la imagen
+    tmp_txt = gen_functions.gen_text_img(tmp_img)
+    
+    # Buscar 'private' en texto
+    return 'private' in tmp_txt
+
+# Ajustar popover de seguidos y seguidores
+def ins_aj_popov_box():
+    # Desplazar verticalmente cajas de captura de imagen en el popover
+    ins_popov_dat_box[1] = gen_functions.gen_centro_xy[1] + 0
+    ins_popov_tip_box[1] = gen_functions.gen_centro_xy[1] + 0
+
+# Coordenas del botón "Follow", "Following", "Follow Back" de ventana de seguidos y seguidores
 ins_bot_seg_box = [648, 186, 94, 22]
 
-# Ajustar botón "Follow", "Following", "Follow back" de ventana de seguidores y seguidos
+# Ajustar botón "Follow", "Following", "Follow back" de ventana de seguidos y seguidores y retornar cordenadas de su centro
 def ins_aj_seg_box():
     global ins_bot_seg_box
     
@@ -132,6 +163,13 @@ def ins_act_fecha():
 def ins_act_seg_txt():
     gen_functions.gen_act_txt('Autorun/Instagram/Refs/ins_ref.txt', 1, ins_num_seguidores_bot)
 
+# Parámetros para decidir si seguir o no
+ins_ratio_min = 3
+ins_sig_min = 900
+
+# Campo de visión en ventana de seguidos y seguidores
+ins_seg_box = [0, 0, 0, 0]
+
 # Elegir a un seguidor del bot
 def ins_elegir_seguidor_bot():
     # Calcular máximo de iteraciones
@@ -150,20 +188,23 @@ def ins_elegir_seguidor_bot():
             # Desplazar hacia el siguiente seguidor
             gen_functions.gen_desp_usr(ins_seg_box)
         
-        # Encontrar nombre del seguidor y asignar coordenas
+        # Encontrar nombre del seguidor y asignar coordenas a variable genérica
         gen_functions.gen_prim_usr(ins_seg_box)
 
-        # Ajustar coordenadas de captura de popover
+        # Ajustar coordenadas de cajas de captura de popover
+        ins_aj_popov_box()
 
+        # Colocar cursor sobre el nombre de usuario
+        gen_functions.gen_cur_spec()
 
         # Evaluar si los seguidores son privados desde el popover
-
+        bl_priv = ins_seguidores_priv()
 
         # Si la cuenta no es privada
-        if x:
-            # Obtener número de "seguidos" y "seguidores" del seguidor desde el popover
+        if not bl_priv:
+            # Obtener número de "seguidores" y "seguidos" del seguidor desde el popover
             ins_act_seg_seguidor()
-        
+
             # Calcular ratio del seguidor
             tmp_ratio = gen_functions.gen_act_ratio(ins_num_seguidos_seguidor, ins_num_seguidores_seguidor)
         
@@ -190,40 +231,43 @@ def ins_ciclo_busqueda(val_busq):
     cont_seg = 0
     
     # Iteraciones entre seguidores del seguidor
-    for iter_seg in range(tt_num_seguidores_seguidor):
+    for iter_seg in range(ins_num_seguidores_seguidor - 5):
         if cont_seg == val_busq:
             break
         else:
             # Desplazar hacia abajo después del primer seguidor
             if bl_prim_usr:
                 # Colocar cursor para desplazar hacia abajo
-                tt_pos_pop_up()
+                ins_pos_pop_up()
                 
                 # Desplazar hacia el siguiente seguidor
-                gen_functions.gen_desp_usr(tt_seg_box)
+                gen_functions.gen_desp_usr(ins_seg_box)
             
             # Encontrar nombre del seguidor y asignar coordenas a variable genérica
-            gen_functions.gen_prim_usr(tt_seg_box)
+            gen_functions.gen_prim_usr(ins_seg_box)
             
-            # Asignar coordenas del centro del botón
-            coords_btn = tt_aj_seg_box()
+            # Asignar coordenas del centro del botón y ajustar caja de captura de texto de botón
+            coords_btn = ins_aj_seg_box()
             
             # Evaluar si la palabra "Follow" está presente
-            bl_follow = tt_bl_pal("Follow")
+            bl_follow = ins_bl_btn("Follow")
             
             # El botón indica "Follow"
             if bl_follow:
                 # Ajustar coordenadas de captura de popover
-                
+                ins_aj_popov_box()
 
-                # Obtener número de "seguidos" y "seguidores" del seguidor
-                tt_act_seg_seguidor()
+                # Colocar cursor sobre el nombre de usuario
+                gen_functions.gen_cur_spec()
+
+                # Obtener número de "seguidores" y "seguidos" del seguidor
+                ins_act_seg_seguidor()
                 
                 # Calcular ratio del seguidor
-                tmp_ratio = gen_functions.gen_act_ratio(tt_num_seguidos_seguidor, tt_num_seguidores_seguidor)
+                tmp_ratio = gen_functions.gen_act_ratio(ins_num_seguidos_seguidor, ins_num_seguidores_seguidor)
 
                 # Si el ratio es igual o mayor al aceptado y cumple el mínimo de "seguidos", seguir usuario
-                if tmp_ratio >= tt_ratio_min and tt_num_seguidos_seguidor >= tt_sig_min:
+                if tmp_ratio >= ins_ratio_min and ins_num_seguidos_seguidor >= ins_sig_min:
                     # Asignar las coordenas del centro del botón a la variable genérica con coordenadas en dónde hacer click
                     gen_functions.gen_camb_coords(coords_btn)
                     
