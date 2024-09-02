@@ -25,16 +25,11 @@ def tt_seguidores_pos():
     pyautogui.click()
     time.sleep(10)
 
-# Colocar cursor sobre "Followers"
-def tt_seguidores_pos_cur():
-    pyautogui.moveTo(286, 246)
-    time.sleep(1)
-
 # Cerrar pop up
 def tt_cerrar_pop_up():
     pyautogui.moveTo(90, 540)
     pyautogui.click()
-    time.sleep(1)
+    time.sleep(2)
 
 # Posición en pop up
 def tt_pos_pop_up():
@@ -91,7 +86,7 @@ def tt_limp_seguidos_bot():
                 bl_prim_usr = False
                 
                 # Dejar de seguir usuarios
-                for iter_seg in range(tt_num_seguidos_bot - 4):
+                for iter_seg in range(tt_num_seguidos_bot - 5):
                     
                     if bl_prim_usr:
                         # Colocar cursor para desplazar hacia abajo
@@ -145,9 +140,6 @@ def tt_act_seg_seguidor():
 
 # Evaluar si los seguidores son privados
 def tt_seguidores_priv():
-    # Colocar el cursor sobre "Followers"
-    tt_seguidores_pos_cur()
-    
     # Primera captura de pantalla
     tmp_scr1 = gen_functions.gen_capt_pant()
     
@@ -218,7 +210,7 @@ def tt_elegir_seguidor_bot():
         # Cambiar bool
         bl_prim_usr = True
 
-# Coordenas del botón "Follow", "Following", "Follow Back" de ventana de seguidores y seguidos
+# Coordenas del botón "Follow", "Following", "Follow Back", "Friends", "Remove" de ventana de seguidores y seguidos
 tt_bot_seg_box = [648, 186, 94, 22]
 
 # Ajustar botón "Follow", "Following", "Follow back" de ventana de seguidores y seguidos y retornar cordenadas de su centro
