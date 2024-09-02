@@ -113,24 +113,31 @@ def gen_corr_lin(tmp_img):
     # Eliminar líneas en blanco
     cl_txt = re.sub(r'\n\s*\n', '\n', tmp_txt).strip()
 
-    # Separar cifras y palabras
-    lns_tmp = cl_txt.split('\n')
+    # El texto contiene dos o más líneas
+    if len(tmp_txt.splitlines()) >= 2:
+        # Dividir texto en líneas
+        lns_tmp = cl_txt.split('\n')
+        
+        # Separar cifras y palabras
+        nmb_tmp = lns_tmp[0].split()
+        pal_tmp = lns_tmp[1].split()
 
-    nmb_tmp = lns_tmp[0].split()
-    pal_tmp = lns_tmp[1].split()
-
-    # Retornar cifras y palabras combinadas en una línea
-    return ' '.join(f"{num_v} {pal_v}" for num_v, pal_v in zip(nmb_tmp, pal_tmp))
+        # Retornar cifras y palabras combinadas en una línea
+        return ' '.join(f"{num_v} {pal_v}" for num_v, pal_v in zip(nmb_tmp, pal_tmp))
 
 # Obtener cifra anterior a una palabra en un texto
-def gen_cifra_palabra(tmp_text, tmp_palabra):
+def gen_cifra_palabra(tmp_txt, tmp_palabra):
+    # Reemplazar guiones y guiones bajos por puntos (correción de errores de OCR)
+    tmp_txt = tmp_txt.replace('-', '.').replace('_', '.')
+    
     # La expresión regular busca una cifra con o sin decimales seguida de opcionalmente un sufijo (K, k, M, m)
-    tmp_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:([KkMm])\s*)?' + re.escape(tmp_palabra), tmp_text)
+    tmp_match = re.search(r'(\d+(?:\.\d+)?)\s*(?:([KkMm])\s*)?' + re.escape(tmp_palabra), tmp_txt)
     
     # Se encuentra una cifra seguida de la palabra en el texto
     if tmp_match:
         # Extraer la cifra encontrada
         tmp_cifra = tmp_match.group(1)
+        
         # Extraer el sufijo encontrado (si existe)
         suf_val = tmp_match.group(2) if tmp_match.group(2) else ''
         
@@ -154,10 +161,10 @@ def gen_cifra_palabra(tmp_text, tmp_palabra):
 # Obtener una cifra a partir de imagen y una palabra
 def gen_cifra(tmp_img, tmp_palabra):
     # Obtener texto de la imagen sin espacios
-    tmp_text = gen_text_img(tmp_img)
+    tmp_txt = gen_text_img(tmp_img)
     
     # Obtener número desde el texto y retornar
-    return gen_cifra_palabra(tmp_text, tmp_palabra)
+    return gen_cifra_palabra(tmp_txt, tmp_palabra)
 
 # Coordenadas del elemento a encontrar
 gen_centro_xy = [0, 0]
@@ -213,10 +220,10 @@ def gen_calc_cent_rtn(vis_box):
     return tmp_xy
 
 # Conservar segunda línea con texto de una captura de texto
-def gen_2l_text(tmp_text):
+def gen_2l_text(tmp_txt):
     # El texto por lo menos tiene 2 líneas
-    if len(tmp_text.splitlines()) >= 2:
-        seg_lin = tmp_text.splitlines()[1]
+    if len(tmp_txt.splitlines()) >= 2:
+        seg_lin = tmp_txt.splitlines()[1]
         
         # Eliminar espacios en blanco para la línea conservada
         seg_lin_limp = seg_lin.strip()
@@ -226,9 +233,9 @@ def gen_2l_text(tmp_text):
         return ''
 
 # Conservar primera línea con texto de una captura de texto
-def gen_limp_text(tmp_text):
+def gen_limp_text(tmp_txt):
     # Eliminar líneas en blanco
-    lins_text = [lin_it.strip() for lin_it in tmp_text.splitlines() if lin_it.strip()]
+    lins_text = [lin_it.strip() for lin_it in tmp_txt.splitlines() if lin_it.strip()]
     
     # Eliminar todas las líneas excepto la primera
     if lins_text:
@@ -250,13 +257,13 @@ def gen_usr_lins(tmp_img):
     global gen_usr_ref, gen_2l_ref
     
     # Obtener texto de la imagen
-    tmp_text = gen_text_img(tmp_img)
+    tmp_txt = gen_text_img(tmp_img)
     
     # Obtener primera línea del texto
-    gen_usr_ref = gen_limp_text(tmp_text)
+    gen_usr_ref = gen_limp_text(tmp_txt)
     
     # Obtener segunda línea del texto
-    gen_2l_ref = gen_2l_text(tmp_text)
+    gen_2l_ref = gen_2l_text(tmp_txt)
 
 # Asignar nombre del primer usuario en lista y asignar coordenadas
 def gen_prim_usr(vis_box):
@@ -279,10 +286,10 @@ def gen_desp_usr(vis_box):
         tmp_img = gen_capt_spec_pant(vis_box)
         
         # Obtener texto de una imagen
-        tmp_text = gen_text_img(tmp_img)
+        tmp_txt = gen_text_img(tmp_img)
         
-        # Obtener nombre de usuario (primera línea)
-        tmp_usr = gen_limp_text(tmp_text)
+        # Obtener nombre de usuario (primera línea en campo de captura)
+        tmp_usr = gen_limp_text(tmp_txt)
         
         # Desplazar si el nombre del usuario o la segunda línea están presentes
         if tmp_usr == gen_usr_ref or tmp_usr == gen_2l_ref:
@@ -315,9 +322,9 @@ def gen_calc_pos_text(tmp_img, text_ref):
     # Iterar y comparar cada una de las palabras de la imagen
     for iter_elem in range(num_texts):
         if int(texts_img['conf'][iter_elem]) > 0:
-            tmp_text = texts_img['text'][iter_elem].strip()
+            tmp_txt = texts_img['text'][iter_elem].strip()
             
-            if any(tmp_text in eval_ch for eval_ch in text_ref.split()):
+            if any(tmp_txt in eval_ch for eval_ch in text_ref.split()):
                 # Obtener las coordenadas X1,Y1, X4,Y4 del bloque de texto
                 x1 = texts_img['left'][iter_elem]
                 y1 = texts_img['top'][iter_elem]
