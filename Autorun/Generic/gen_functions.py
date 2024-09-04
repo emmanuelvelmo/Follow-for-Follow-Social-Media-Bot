@@ -8,10 +8,28 @@ import os
 import re
 
 # Escribir mensaje
-def gen_escribir_msg(val_msg):
+def gen_escribir_msg(val_msg, val_tiempo):
+    # Reemplazar caracteres acentuados por sus equivalentes no acentuados
+    ch_reemp = {'á':'a','é':'e','í':'i','ó':'o','ú':'u','Á':'A','É':'E','Í':'I','Ó':'O','Ú':'U','ñ':'n','Ñ':'N'}
+    
+    for ch_it, val_it in ch_reemp.items():
+        val_msg = val_msg.replace(ch_it, val_it)
+    
     pyautogui.typewrite(val_msg)
     pyautogui.press('enter')
-    time.sleep(2)
+    time.sleep(val_tiempo)
+
+# Eliminar espacios y líneas en blanco en un texto
+def gen_del_lin(tmp_txt):
+    # Limpiar espacios en blanco
+    tmp_txt = tmp_txt.strip()
+    
+    # Retornar texto sin saltos de línea
+    return re.sub(r'\n\s*\n', '\n', tmp_txt).strip()
+
+# Reemplazar saltos de línea por espacios
+def gen_reemp_salt(tmp_txt):
+    return re.sub(r'\s+', ' ', tmp_txt).strip()
 
 # Buscar en txt y asignar valor a variable
 def gen_busq_txt(ruta_txt, pos_linea):
@@ -105,22 +123,30 @@ def gen_text_img(tmp_img):
     # Limpiar espacios en blanco y retornar
     return val_text.strip()
 
+# Obtener texto de un área específica de la pantalla
+def gen_(vis_box):
+    # Capturar un área específica de la pantalla
+    tmp_img = gen_capt_spec_pant(vis_box)
+    
+    # Retornar texto de la imagen sin espacios
+    return gen_text_img(tmp_img)
+
 # Corregir saltos de línea en texto
 def gen_corr_lin(tmp_img):
     # Obtener texto de la imagen
     tmp_txt = gen_text_img(tmp_img)
 
     # Eliminar líneas en blanco
-    cl_txt = re.sub(r'\n\s*\n', '\n', tmp_txt).strip()
+    tmp_txt = re.sub(r'\n\s*\n', '\n', tmp_txt).strip()
 
     # El texto contiene dos o más líneas
     if len(tmp_txt.splitlines()) >= 2:
         # Dividir texto en líneas
-        lns_tmp = cl_txt.split('\n')
+        tmp_txt = tmp_txt.split('\n')
         
         # Separar cifras y palabras
-        nmb_tmp = lns_tmp[0].split()
-        pal_tmp = lns_tmp[1].split()
+        nmb_tmp = tmp_txt[0].split()
+        pal_tmp = tmp_txt[1].split()
 
         # Retornar cifras y palabras combinadas en una línea
         return ' '.join(f"{num_v} {pal_v}" for num_v, pal_v in zip(nmb_tmp, pal_tmp))
@@ -256,7 +282,7 @@ gen_2l_ref = ''
 def gen_usr_lins(tmp_img):
     global gen_usr_ref, gen_2l_ref
     
-    # Obtener texto de la imagen
+    # Obtener texto de la imagen sin espacios
     tmp_txt = gen_text_img(tmp_img)
     
     # Obtener primera línea del texto
@@ -282,10 +308,10 @@ def gen_prim_usr(vis_box):
 # Desplazar hacia el siguiente usuario
 def gen_desp_usr(vis_box):
     while True:
-        # Capturar región en pantalla
+        # Capturar un área específica de la pantalla
         tmp_img = gen_capt_spec_pant(vis_box)
         
-        # Obtener texto de una imagen
+        # Obtener texto de la imagen sin espacios
         tmp_txt = gen_text_img(tmp_img)
         
         # Obtener nombre de usuario (primera línea en campo de captura)
@@ -303,11 +329,25 @@ def gen_desp_usr(vis_box):
             # Dejar de desplazar hacia abajo
             break
 
-# Asignar coordenadas de un objeto en pantalla
-def gen_coinc_imgs(base_img, ref_img):
+# Asignar coordenadas del centro de un objeto en pantalla
+def gen_coinc_imgs(vis_box, ref_img_dir):
     global gen_centro_xy
     
-    #
+    # Capturar un área específica de la pantalla
+    base_img = gen_capt_spec_pant(vis_box)
+    
+    # Cargar imagen de referencia
+    ref_img = cv2.imread(ref_img_dir, cv2.IMREAD_GRAYSCALE)
+    
+    # Encontrar valores de coincidencia y el vértice X1,Y1
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(cv2.matchTemplate(base_img, ref_img, cv2.TM_CCOEFF_NORMED))
+    
+    # Obtener las dimensiones del template (imagen de referencia)
+    ancho_val, alto_val = ref_img.shape[::-1]
+    
+    # Asignar coordenadas del centro del objeto
+    gen_centro_xy[0] = round(vis_box[0] + (max_loc[0] + (ancho_val / 2)))
+    gen_centro_xy[1] = round(vis_box[1] + (max_loc[1] + (alto_val / 2)))
 
 # Asignar coordenadas de un texto en pantalla
 def gen_calc_pos_text(tmp_img, text_ref):
