@@ -15,20 +15,6 @@ def sys_abrir_chr():
     pyautogui.moveTo(100, 440)
     pyautogui.click()
     time.sleep(0.25)
-    pyautogui.moveTo(270, 440)
-    pyautogui.click()
-    time.sleep(20)
-    
-    # Cerrar ventana
-    sys_cerrar_ventana()
-    
-    # Abrir Chromium desde el menú de aplicaciones
-    pyautogui.moveTo(16, 586)
-    pyautogui.click()
-    time.sleep(0.25)
-    pyautogui.moveTo(100, 440)
-    pyautogui.click()
-    time.sleep(0.25)
     pyautogui.moveTo(300, 440)
     pyautogui.click()
     time.sleep(20)
