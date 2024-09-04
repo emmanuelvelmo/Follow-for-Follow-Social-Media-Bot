@@ -356,6 +356,7 @@ def tt_act_fecha():
 def tt_act_seg_txt():
     gen_functions.gen_act_txt('Autorun/TikTok/Refs/tt_ref.txt', 1, tt_num_seguidores_bot)
 
+# Ciclo follow for follow
 def tt_ciclo_bot(val_seg, val_tiempo):
     # Abrir TikTok
     sys_functions.sys_abrir_tt()
