@@ -11,6 +11,11 @@ def chr_pag_siguiente():
     pyautogui.hotkey('alt', 'right')
     time.sleep(10)
 
+# Nueva pestaña
+def chr_nueva_pestana():
+    pyautogui.hotkey('ctrl', 't')
+    time.sleep(2)
+
 # Cerrar pestaña
 def chr_cerrar_pestana():
     pyautogui.hotkey('ctrl', 'w')
@@ -37,6 +42,11 @@ def chr_error_cerrar():
     pyautogui.click()
     time.sleep(0.5)
 
+# Final de la página
+def chr_fin_pag():
+    pyautogui.press('end')
+    time.sleep(2)
+
 # MultiLogin
 def chr_multilogin():
     pyautogui.press('f11')
@@ -47,3 +57,13 @@ def chr_multilogin():
     pyautogui.moveTo(710, 294)
     pyautogui.click()
     time.sleep(0.5)
+    
+# ChatGPT
+def chr_gpt():
+    chr_nueva_pestana()
+    chr_pestana_anterior()
+    chr_cerrar_pestana()
+    
+    pyautogui.moveTo(40, 15)
+    pyautogui.click()
+    time.sleep(15)
