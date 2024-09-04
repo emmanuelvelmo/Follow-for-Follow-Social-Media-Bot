@@ -322,6 +322,7 @@ def inst_ciclo_busqueda(val_busq):
             # Cambiar bool
             bl_prim_usr = True
 
+# Ciclo follow for follow
 def inst_ciclo_bot(val_seg, val_tiempo):
     # Abrir Instagram
     sys_functions.sys_abrir_inst()
