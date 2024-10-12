@@ -1,6 +1,11 @@
 import pyautogui
 import time
 
+# Pantalla completa
+def chr_pant_comp():
+    pyautogui.press('f11')
+    time.sleep(1)
+
 # Página anterior
 def chr_pag_anterior():
     pyautogui.hotkey('alt', 'left')
@@ -46,9 +51,15 @@ def chr_error_cerrar():
 def chr_fin_pag():
     pyautogui.press('end')
     time.sleep(2)
+    
+# ChatGPT
+def chr_bm_gpt():
+    pyautogui.moveTo(60, 20)
+    pyautogui.click()
+    time.sleep(15)
 
-# MultiLogin
-def chr_multilogin():
+# Cookies Profile Switcher
+def chr_co_prof_swt():
     pyautogui.press('f11')
     time.sleep(0.5)
     pyautogui.moveTo(874, 54)
@@ -57,13 +68,12 @@ def chr_multilogin():
     pyautogui.moveTo(710, 294)
     pyautogui.click()
     time.sleep(0.5)
-    
-# ChatGPT
-def chr_gpt():
-    chr_nueva_pestana()
-    chr_pestana_anterior()
-    chr_cerrar_pestana()
-    
-    pyautogui.moveTo(40, 15)
-    pyautogui.click()
-    time.sleep(15)
+
+# Ir a un sitio web
+def chr_sit_web(val_url,val_tiempo):
+    chr_pant_comp()
+    pyautogui.press('f6')
+    pyautogui.typewrite(val_url)
+    pyautogui.press('enter')
+    chr_pant_comp()
+    time.sleep(val_tiempo)
