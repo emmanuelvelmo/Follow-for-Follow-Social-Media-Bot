@@ -324,11 +324,14 @@ def inst_ciclo_busqueda(val_busq):
 
 # Ciclo follow for follow
 def inst_ciclo_bot(val_seg, val_tiempo):
-    # Abrir Instagram
-    sys_functions.sys_abrir_inst()
+    # Abrir Chromium
+    sys_functions.sys_abrir_chr()
     
     # Cerrar ventana de restaurar páginas
     chr_functions.chr_error_cerrar()
+    
+    # Ir a Instagram
+    chr_functions.chr_sit_web("https://www.instagram.com/", 30)
     
     # Ir a perfil de Instagram del bot
     inst_perfil_bot()
