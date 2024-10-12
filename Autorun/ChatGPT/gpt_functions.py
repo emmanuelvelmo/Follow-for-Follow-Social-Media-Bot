@@ -4,12 +4,15 @@ from Autorun.Chromium import chr_functions
 import pyautogui
 import time
 
+# Coordenadas de input box (primera petición)
+gpt_cord_input_box_1 = [500, 545]
+
 # Coordenadas de input box
-gpt_cord_input_box = [500, 545]
+gpt_cord_input_box_2 = [500, 545]
 
 # Usar input box
-def gpt_input_box():
-    gen_functions.gen_centro_xy = gpt_cord_input_box
+def gpt_input_box(tmp_coords):
+    gen_functions.gen_centro_xy = tmp_coords
     gen_functions.gen_click_spec(1)
 
 # Campo de captura de logo
@@ -105,12 +108,19 @@ def gpt_gen_preg():
 
 # Capturar preguntas y expresar respuestas indeterminadamente
 def gpt_preg_resp():
+    global gpt_cord_input_box_1, gpt_cord_input_box_2
+    
+    prim_pet = True
+    
     while True:
-        # Cerrar posible pop up
-        gpt_cerr_popup()
-        
-        # Colocar cursor sobre input box
-        gpt_input_box()
+        if prim_pet: 
+            # Cerrar posible pop up
+            gpt_cerr_popup()
+            
+            # Colocar cursor sobre input box
+            gpt_input_box(gpt_cord_input_box_1)
+            
+            prim_pet = False
         
         # Esperar a capturar pregunta
         #gpt_cam_capt()
@@ -119,7 +129,7 @@ def gpt_preg_resp():
         gpt_gen_preg()
         
         # Enviar pregunta
-        gen_functions.gen_escribir_msg(gpt_preg_txt, 10)
+        gen_functions.gen_escribir_msg(gpt_preg_txt, 20)
         
         # Cerrar posible pop up
         gpt_cerr_popup()
@@ -136,6 +146,9 @@ def gpt_preg_resp():
         # Expresar respuesta
         gpt_mst_resp()
         
+        # Colocar cursor sobre input box
+        gpt_input_box(gpt_cord_input_box_2)
+        
         #----------------------------------------------
         input('')
 
@@ -148,7 +161,7 @@ def gpt_ciclo_resp():
     chr_functions.chr_error_cerrar()
     
     # Ir a ChatGPT
-    chr_functions.chr_gpt()
+    chr_functions.chr_bm_gpt()
     
     # Capturar preguntas y expresar respuestas indeterminadamente 
     gpt_preg_resp()
