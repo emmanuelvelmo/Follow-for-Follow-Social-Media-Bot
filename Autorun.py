@@ -1,6 +1,10 @@
+from Autorun.System import sys_functions
 from Autorun.TikTok import tt_functions
 from Autorun.Instagram import inst_functions
 from Autorun.ChatGPT import gpt_functions
+
+# Cerrar ventana de resolución
+#sys_functions.sys_cerrar_res()
 
 # Ejecutar ciclo indefinidamente
 #while True:
