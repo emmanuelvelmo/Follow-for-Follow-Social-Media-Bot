@@ -358,11 +358,14 @@ def tt_act_seg_txt():
 
 # Ciclo follow for follow
 def tt_ciclo_bot(val_seg, val_tiempo):
-    # Abrir TikTok
-    sys_functions.sys_abrir_tt()
+    # Abrir Chromium
+    sys_functions.sys_abrir_chr()
     
     # Cerrar ventana de restaurar páginas
     chr_functions.chr_error_cerrar()
+    
+    # Ir a TikTok
+    chr_functions.chr_sit_web("https://www.tiktok.com/", 30)
     
     # Ir a perfil de TikTok del bot
     tt_perfil_bot()
