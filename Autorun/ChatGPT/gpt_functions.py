@@ -119,8 +119,6 @@ def gpt_preg_resp():
             
             # Colocar cursor sobre input box
             gpt_input_box(gpt_cord_input_box_1)
-            
-            prim_pet = False
         
         # Esperar a capturar pregunta
         #gpt_cam_capt()
@@ -129,7 +127,12 @@ def gpt_preg_resp():
         gpt_gen_preg()
         
         # Enviar pregunta
-        gen_functions.gen_escribir_msg(gpt_preg_txt, 20)
+        if prim_pet:
+            gen_functions.gen_escribir_msg(gpt_preg_txt, 30)
+
+            prim_pet = False
+        else:
+            gen_functions.gen_escribir_msg(gpt_preg_txt, 15)
         
         # Cerrar posible pop up
         gpt_cerr_popup()
