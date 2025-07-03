@@ -2,10 +2,26 @@ import pyautogui
 import numpy
 import cv2
 import pytesseract
+import random
 import time
 import datetime
 import os
 import re
+
+# Genera una sílaba de 3 letras
+def generar_silaba():
+    vocales = ['a', 'e', 'i', 'o', 'u']
+    consonantes_inicio = ['m', 'l', 's', 'n', 'c', 'd', 'h', 'j', 'k', 'v', 'b', 't']
+    consonantes_medias = ['l', 'n', 'm', 'r', 's', 'd', 't']
+    
+    estructuras_opc = [
+        # Aleatoriamente generar sílaba CVC, CVV o VCV
+        [random.choice(consonantes_inicio), random.choice(vocales), random.choice(consonantes_medias)],
+        [random.choice(consonantes_inicio), random.choice(vocales), random.choice(vocales)],
+        [random.choice(vocales), random.choice(consonantes_medias), random.choice(vocales)]
+    ]
+    
+    return ''.join(random.choice(estructuras_opc))
 
 # Escribir mensaje
 def gen_escribir_msg(val_msg, val_tiempo):
