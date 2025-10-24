@@ -64,8 +64,8 @@ def gpt_ult_ch():
     # Limpiar espacios y líneas en blanco
     gpt_resp_txt = gen_functions.gen_del_lin(gpt_resp_txt)
     
-    # Capturar último carácter
-    gpt_resp_txt = gpt_resp_txt[-1]
+    # Capturar último carácter como minúscula
+    gpt_resp_txt = gpt_resp_txt[-1].lower()
 
 # Asignar respuesta obtenida
 def gpt_capt_resp():
